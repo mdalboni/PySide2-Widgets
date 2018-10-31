@@ -2,7 +2,7 @@ from threading import Timer
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QApplication, QSplashScreen, QWidget
+from PySide2.QtWidgets import QApplication, QSplashScreen, QWidget, QVBoxLayout, QLabel
 
 
 class Splash:
@@ -25,7 +25,8 @@ class WidgetBuilder:
 
     def build(self):
         self.form = QWidget()
-        # hard process
+        self.form.setLayout(QVBoxLayout())
+        self.form.layout().addWidget(QLabel("Your App here :)"))
 
     def show(self):
         self.form.show()
