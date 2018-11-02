@@ -28,5 +28,6 @@ A widget with hovering effect overriding the MouseEnter/MouseLeave, and adding a
 
 - Python 3.4+
 - PySide2 ``` pip install PySide2 ``` 
+- win32api ```pip install pywin32 ```
 
 
