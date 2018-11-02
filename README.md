@@ -27,7 +27,8 @@ A widget with hovering effect overriding the MouseEnter/MouseLeave, and adding a
 ## Requirements
 
 - Python 3.4+
-- PySide2 ``` pip install PySide2 ``` 
-- win32api ```pip install pywin32 ```
-
+- PySide2 ```pip install PySide2``` 
+- win32api ```pip install pywin32```
+- desktopmagic ```pip install desktopmagic```
+- PIL/Pilow ```pip install pillow```
 
