@@ -1,3 +1,4 @@
+import math
 import time
 import win32api
 import win32gui
@@ -7,7 +8,73 @@ from PySide2.QtCore import QEvent, Signal
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
 from desktopmagic.screengrab_win32 import getRectAsImage
 
-from models.color import ColorModel, colorsys
+
+class ColorModel:
+    def __init__(self, r, g, b, h, s, v):
+        self.red = r
+        self.green = g
+        self.blue = b
+        self.hue = h
+        self.saturation = s
+        self.value = v
+
+    def update(self, type, value):
+        self.__setattr__(type, value)
+
+    def get_by_type(self, type):
+        return self.__getattribute__(type)
+
+
+class ColorSys:
+
+    @staticmethod
+    def hsv_to_rgb(h, s, v):
+        h = float(h)
+        s = float(s)
+        v = float(v)
+        h60 = h / 60.0
+        h60f = math.floor(h60)
+        hi = int(h60f) % 6
+        f = h60 - h60f
+        p = v * (1 - s)
+        q = v * (1 - f * s)
+        t = v * (1 - (1 - f) * s)
+        r, g, b = 0, 0, 0
+        if hi == 0:
+            r, g, b = v, t, p
+        elif hi == 1:
+            r, g, b = q, v, p
+        elif hi == 2:
+            r, g, b = p, v, t
+        elif hi == 3:
+            r, g, b = p, q, v
+        elif hi == 4:
+            r, g, b = t, p, v
+        elif hi == 5:
+            r, g, b = v, p, q
+        r, g, b = int(r * 255), int(g * 255), int(b * 255)
+        return r, g, b
+
+    @staticmethod
+    def rgb_to_hsv(r, g, b):
+        r, g, b = r / 255.0, g / 255.0, b / 255.0
+        mx = max(r, g, b)
+        mn = min(r, g, b)
+        df = mx - mn
+        if mx == mn:
+            h = 0
+        elif mx == r:
+            h = (60 * ((g - b) / df) + 360) % 360
+        elif mx == g:
+            h = (60 * ((b - r) / df) + 120) % 360
+        elif mx == b:
+            h = (60 * ((r - g) / df) + 240) % 360
+        if mx == 0:
+            s = 0
+        else:
+            s = df / mx
+        v = mx
+        return h, s, v
 
 
 class ColorPicker:
@@ -23,7 +90,7 @@ class ColorPicker:
     def get_rgb(self, im, x, y):
         rgb_im = im.convert('RGB')
         r, g, b = rgb_im.getpixel((x, y))
-        h, s, v = colorsys.rgb_to_hsv(r, g, b)
+        h, s, v = ColorSys.rgb_to_hsv(r, g, b)
         return ColorModel(r, g, b, h, s, v)
 
     def get_position(self):
@@ -31,18 +98,15 @@ class ColorPicker:
         return x_y[0], x_y[1]
 
     def get_screen_rgb(self):
-        try:
-            x, y = self.get_position()
-            self.MOUSE_SIGNAL.emit(x, y)
-            rect = (x, y, x + self.size, y + self.size)
-            im = self.screen_shot(rect)
-            color_selection = []
-            for y in range(0, self.size):
-                for x in range(0, self.size):
-                    color_selection.append(self.get_rgb(im, x, y))
-            self.COLOR_SIGNAL.emit(color_selection)
-        except:
-            print('fail')
+        x, y = self.get_position()
+        self.MOUSE_SIGNAL.emit(x, y)
+        rect = (x, y, x + self.size, y + self.size)
+        im = self.screen_shot(rect)
+        color_selection = []
+        for y in range(0, self.size):
+            for x in range(0, self.size):
+                color_selection.append(self.get_rgb(im, x, y))
+        self.COLOR_SIGNAL.emit(color_selection)
 
     def start(self):
         state_left = win32api.GetKeyState(0x01)  # Left button down = 0 or 1. Button up = -127 or -128
@@ -137,7 +201,8 @@ class ColorMouseWidget(QWidget):
         self.close()
 
     def get_color(self, size):
-        Thread(target=lambda: ColorPicker(self.COLOR_SIGNAL, self.MOUSE_POSITION, self.CLOSE_SIGNAL, size).start(), daemon=True).start()
+        Thread(target=lambda: ColorPicker(self.COLOR_SIGNAL, self.MOUSE_POSITION, self.CLOSE_SIGNAL, size).start(),
+               daemon=True).start()
 
     def location_on_the_screen(self, x, y):
         self.move(x + 10, y + 10)
