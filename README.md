@@ -25,8 +25,11 @@ A widget with hovering effect overriding the MouseEnter/MouseLeave, and adding a
 
 #### Range Slider 
 
-A widget with two handles to select a range
+A widget with two handles to select a range.
 
+#### Resizable rect item 
+
+A Resizable rect item to use with QGraphicsView/QGraphicsScene.
 
 
 ## Requirements
