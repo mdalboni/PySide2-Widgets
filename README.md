@@ -23,6 +23,11 @@ Simple splash sample, using Timer.
 
 A widget with hovering effect overriding the MouseEnter/MouseLeave, and adding a hovering menu.
 
+#### Range Slider 
+
+A widget with two handles to select a range
+
+
 
 ## Requirements
 
