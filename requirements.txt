@@ -1,0 +1,4 @@
+Desktopmagic==14.3.11
+Pillow==8.4.0
+pypiwin32==223
+PySide2==5.15.2
