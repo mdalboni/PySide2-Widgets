@@ -7,7 +7,8 @@ from PySide2.QtWidgets import QApplication, QFrame, QGraphicsPixmapItem, QGraphi
 
 
 class ImageViewer(QWidget):
-    def __init__(self, path=None, list=[], index=0):
+    def __init__(self, path=None, list=None, index=0):
+        list = [] if list is None else list
         super(ImageViewer, self).__init__()
         self.path = path
         self.index = index
